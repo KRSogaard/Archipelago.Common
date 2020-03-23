@@ -18,7 +18,8 @@ allprojects {
         jcenter()
         maven { url 'https://plugins.gradle.org/m2/' }
         maven {
-            url "s3://repo.wewelo.com/release"
+            name = "Wewelo Repo"
+            url "s3://${weweloRepo}"
             credentials(AwsCredentials) {
                 accessKey weweloRepoUser
                 secretKey weweloRepoPassword
@@ -69,13 +70,13 @@ project(':Archipelago.Common') {
             maven(MavenPublication) {
                 groupId = 'build.archipelago'
                 artifactId = 'common'
-                version = '1.0'
+                version = '1.0.1'
                 from components.java
             }
         }
         repositories {
             maven {
-                url "s3://repo.wewelo.com/release"
+                url "s3://${weweloRepo}"
                 credentials(AwsCredentials) {
                     accessKey weweloRepoUser
                     secretKey weweloRepoPassword
@@ -97,13 +98,13 @@ project(':Archipelago.Common.DynamoDB') {
             maven(MavenPublication) {
                 groupId = 'build.archipelago'
                 artifactId = 'common-dynamodb'
-                version = '1.0'
+                version = '1.0.1'
                 from components.java
             }
         }
         repositories {
             maven {
-                url "s3://repo.wewelo.com/release"
+                url "s3://${weweloRepo}"
                 credentials(AwsCredentials) {
                     accessKey weweloRepoUser
                     secretKey weweloRepoPassword
