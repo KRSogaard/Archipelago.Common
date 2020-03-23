@@ -1,0 +1,3 @@
+include 'Archipelago.Common'
+include 'Archipelago.Common.DynamoDB'
+

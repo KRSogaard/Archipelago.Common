@@ -1,0 +1,114 @@
+buildscript {
+    ext {
+        springBootVersion = '2.2.1.RELEASE'
+    }
+
+    repositories {
+        jcenter()
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        maven { url 'https://plugins.gradle.org/m2/' }
+        maven {
+            url "s3://repo.wewelo.com/release"
+            credentials(AwsCredentials) {
+                accessKey weweloRepoUser
+                secretKey weweloRepoPassword
+            }
+        }
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+
+    sourceCompatibility = 11
+    targetCompatibility = 11
+
+    dependencies {
+        // Test framework
+        testImplementation group: 'junit', name: 'junit', version: '4.12'
+        testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.+'
+
+        implementation 'org.slf4j:slf4j-api:1.7.25'
+
+        // Google Guava
+        implementation 'com.google.guava:guava:28.0-jre'
+        implementation 'org.apache.commons:commons-lang3:3.0'
+
+        testImplementation 'commons-io:commons-io:2.6'
+
+        // Lombok
+        implementation 'org.projectlombok:lombok:1.18.12'  // utilities for POJOs
+        annotationProcessor 'org.projectlombok:lombok:1.18.12'
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+    }
+
+    sourceSets {
+        main.java.srcDirs = ['src']
+        main.resources.srcDirs = ['resources']
+        test.java.srcDirs = ['tst']
+        test.resources.srcDirs = ['tst/resources']
+    }
+}
+
+project(':Archipelago.Common') {
+    apply plugin: 'maven-publish'
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId = 'build.archipelago'
+                artifactId = 'common'
+                version = '1.0'
+                from components.java
+            }
+        }
+        repositories {
+            maven {
+                url "s3://repo.wewelo.com/release"
+                credentials(AwsCredentials) {
+                    accessKey weweloRepoUser
+                    secretKey weweloRepoPassword
+                }
+            }
+        }
+    }
+}
+
+project(':Archipelago.Common.DynamoDB') {
+    apply plugin: 'maven-publish'
+
+    dependencies {
+        implementation 'com.amazonaws:aws-java-sdk-dynamodb:1.11.692'
+    }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId = 'build.archipelago'
+                artifactId = 'common-dynamodb'
+                version = '1.0'
+                from components.java
+            }
+        }
+        repositories {
+            maven {
+                url "s3://repo.wewelo.com/release"
+                credentials(AwsCredentials) {
+                    accessKey weweloRepoUser
+                    secretKey weweloRepoPassword
+                }
+            }
+        }
+    }
+}
